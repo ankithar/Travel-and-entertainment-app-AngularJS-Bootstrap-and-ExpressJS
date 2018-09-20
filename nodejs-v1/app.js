@@ -11,8 +11,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static("./public"));
 
-//app.get("/service", function(req, res) {
-//}
+
 app.get('/service',(req,res) => {
 var next;
 let jsonObject;
@@ -25,11 +24,11 @@ let locationData = req.query.locationData;
 var geocodingApi = <GOOGLE_API_KEY> 
 let nearbySearchApiKey = <GOOGLE_API_KEY> 
 
-var github = {
+var entertainment = {
   //token: null,
     counter:0,
   
-  getUser: function() {
+  getGeocode: function() {
       console.log("inside getUser");
       let uri;
       if(radio === 'here'){
@@ -45,14 +44,12 @@ var github = {
      // "uri": "https://maps.googleapis.com/maps/api/geocode/json?address=University of southern california, LA, CA, USA&API_KEY=<API_KEY>,
         "uri" : uri,
       "json": true,
-    //  "headers": {
-      //  "Authorization": "Bearer " + github.token,
-        //"User-Agent": "My little demo app"
+    
       }
     );
   },
   
-  getUserReposUrl: function(data) {
+  getNearBySearchURL: function(data) {
       console.log("inside getUserReposUrl");
       let latLngVal;
       if(radio === 'here'){
@@ -77,7 +74,7 @@ var github = {
     return url;
 },
 
-  getUserRepos: function(uri, repos) {
+  getNearBySearchResult: function(uri, repos) {
       console.log("inside getUserRepos");
      // console.log("uri = "+uri);
       //let url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+uri+" &radius=16090&type=default&keyword=usc&key=<API_KEY>";
@@ -91,7 +88,7 @@ var github = {
       if (!repos) {
         repos = [];
       }
-          // if(response.body.status === 'INVALID_REQUEST'){
+          
           if(response.body.status === 'ZERO_RESULTS'){
               let error = {"errorCustom" : "ZERO_RESULTS"};
               return error;
@@ -103,7 +100,7 @@ var github = {
              // var url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken='+next+'&key=<API_KEY>';
               var url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken='+next+'&key='+nearbySearchApiKey;
              // console.log("next URL = "+url);
-        return github.getUserRepos(url, repos);
+        return entertainment.getNearBySearchResult(url, repos);
           }
           console.log(response.body.status);
       repos = repos.concat(response.body);
@@ -113,41 +110,31 @@ var github = {
           let next1 = bodyResp.next_page_token;
          // console.log("next = "+next1);
       
-      //if (response.headers.link.split(",").filter(function(link){ return link.match(/rel="next"/) }).length > 0) {
+      
           if(bodyResp.hasOwnProperty('next_page_token')){ 
         console.log("There is more.");
-        //var next = new RegExp(/<(.*)>/).exec(response.headers.link.split(",").filter(function(link){ return link.match(/rel="next"/) })[0])[1];
+        
               next = bodyResp.next_page_token;
               //var url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken='+next+'&key=<API_KEY>;
              // var url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken='+next+'&key='+nearbySearchApiKey;
               var url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken='+next;
               //console.log("next URL = "+url);
-        return github.getUserRepos(url, repos);
+        return entertainment.getNearBySearchResult(url, repos);
       }
           
       return repos;
     });
       
-      /*return request({
-          "method":"GET",
-          "uri":"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+uri+" &radius=16090&type=cafe&keyword=pizza&key=<API_KEY>",
-          "json": true
-          
-      }).then(function(response){
-          let resultArray = response.results;
-        let len = resultArray.length;
-          console.log("data2 = "+len);
-          return len;
-      });*/
+     
 }
   
 };
 
 function main(params) {
   
-  return github.getUser()
-  .then(github.getUserReposUrl)
-  .then(github.getUserRepos);
+  return entertainment.getGeocode()
+  .then(entertainment.getNearBySearchURL)
+  .then(entertainment.getNearBySearchResult);
 }
 
 main().then(function(result) {
@@ -192,9 +179,6 @@ main().then(function(result) {
    
     
 });
-    // console.log("sending jsonObject");
-    //res.set('Access-Control-Allow-Origin', '*');
-    //res.send(jsonObject);
     
 });
 
@@ -247,15 +231,7 @@ client.businessMatch('best', {
   console.log("2 "+response2.jsonBody.reviews[0].text);
       //  res.set('Access-Control-Allow-Origin', '*');
        res.send(response2.jsonBody);
-       /* let arr = [];
-        arr[0] = new Object();
-        arr[0].lat = 1;
-        arr[1] = new Object();
-        arr[1].lat = 2;
-        let ob = JSON.stringify(arr);
-        let a = {"name" : "Ankitha"};
-        console.log(a);
-        //res.send(a);*/
+       
 }).catch(e => {
   console.log(e);
         console.log("10. status code = "+e.statusCode);
