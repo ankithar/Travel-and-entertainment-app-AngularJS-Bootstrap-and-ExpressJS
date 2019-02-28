@@ -8,4 +8,4 @@ Key features-
 1) Navigation tabs using AngularJS
 2) PhotoGrid using Bootstrap
 3) Maps using Google APIs
-4) Customer reviews usinh Google and Yelp reviews
+4) Customer reviews using Google and Yelp reviews
